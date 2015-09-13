@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -8,35 +9,12 @@ import (
 
 	"github.com/StephanDollberg/go-json-rest-middleware-jwt"
 	"github.com/ant0ine/go-json-rest/rest"
+	"golang.org/x/crypto/bcrypt"
 )
-
-var commentStore = map[uint32]*Comment{}
-var picStore = map[uint32]*Pic{}
-var userStore = map[string]*User{}
-
-func initState() {
-	userStore["Alice"] = &User{"Alice", "alice"}
-	userStore["Bob"] = &User{"Bob", "bob"}
-	userStore["Eve"] = &User{"Eve", "eve"}
-
-	picStore[1] = &Pic{1, "Moon", "Moon from the ISS",
-		"img/pics/moon.jpg", []uint32{1, 2}, []string{"Alice", "Bob", "Eve"}}
-	picStore[2] = &Pic{2, "Solar Eclipse", "Solar eclipse from ISS ",
-		"img/pics/solareclipse.jpg", []uint32{3, 4}, []string{"Alice", "Eve"}}
-	picStore[3] = &Pic{3, "In the Cloud", "Clouds over the tropical waters of the West Pacific Ocean.",
-		"img/pics/typhoon.jpg", []uint32{}, []string{}}
-	picStore[4] = &Pic{4, "Aurora", "Aurora with solar pannels",
-		"img/pics/aurora.jpg", []uint32{}, []string{}}
-
-	commentStore[1] = &Comment{1, "So cool!", "Alice", 1}
-	commentStore[2] = &Comment{2, "Indeed", "Bob", 1}
-	commentStore[3] = &Comment{3, "Love it", "Eve", 2}
-	commentStore[4] = &Comment{4, "+1", "Alice", 2}
-}
 
 type User struct {
 	Id       string
-	Password string
+	Password []byte
 }
 
 type Pic struct {
@@ -53,6 +31,40 @@ type Comment struct {
 	Body   string `json:"body"`
 	UserId string `json:"userid"`
 	PicId  uint32 `json:"picid"`
+}
+
+var commentStore = map[uint32]*Comment{}
+var picStore = map[uint32]*Pic{}
+var userStore = map[string]*User{}
+
+func hashPassword(password string) []byte {
+	pw, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return pw
+}
+
+func initState() {
+	userStore["Alice"] = &User{"Alice", hashPassword("alice")}
+	userStore["Bob"] = &User{"Bob", hashPassword("bob")}
+	userStore["Eve"] = &User{"Eve", hashPassword("eve")}
+
+	picStore[1] = &Pic{1, "Moon", "Moon from the ISS",
+		"img/pics/moon.jpg", []uint32{1, 2}, []string{"Alice", "Bob", "Eve"}}
+	picStore[2] = &Pic{2, "Solar Eclipse", "Solar eclipse from ISS ",
+		"img/pics/solareclipse.jpg", []uint32{3, 4}, []string{"Alice", "Eve"}}
+	picStore[3] = &Pic{3, "In the Cloud", "Clouds over the tropical waters of the West Pacific Ocean.",
+		"img/pics/typhoon.jpg", []uint32{}, []string{}}
+	picStore[4] = &Pic{4, "Aurora", "Aurora with solar pannels",
+		"img/pics/aurora.jpg", []uint32{}, []string{}}
+
+	commentStore[1] = &Comment{1, "So cool!", "Alice", 1}
+	commentStore[2] = &Comment{2, "Indeed", "Bob", 1}
+	commentStore[3] = &Comment{3, "Love it", "Eve", 2}
+	commentStore[4] = &Comment{4, "+1", "Alice", 2}
 }
 
 func singleComment(w rest.ResponseWriter, r *rest.Request) {
@@ -131,7 +143,10 @@ func createComment(w rest.ResponseWriter, r *rest.Request) {
 }
 
 func authUser(userId string, passwordClaim string) bool {
-	return true
+	if user, ok := userStore[userId]; ok {
+		return bcrypt.CompareHashAndPassword(user.Password, []byte(passwordClaim)) == nil
+	}
+	return false
 }
 
 func main() {
@@ -154,7 +169,7 @@ func main() {
 		IfTrue: jwtMiddleware,
 	})
 
-	router, _ := rest.MakeRouter(
+	router, err := rest.MakeRouter(
 		&rest.Route{"GET", "/pics/:id", singlePic},
 		&rest.Route{"POST", "/pics/:id/like", likePic},
 		&rest.Route{"GET", "/pics", allPics},
@@ -163,9 +178,21 @@ func main() {
 		&rest.Route{"POST", "/login", jwtMiddleware.LoginHandler},
 	)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	api.SetApp(router)
 
 	http.Handle("/", http.FileServer(http.Dir("client/app/")))
 	http.Handle("/api/", http.StripPrefix("/api", api.MakeHandler()))
 	http.ListenAndServe("localhost:3001", nil)
+}
+
+func MyHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Hello World"))
+}
+
+func MyRestHandler(w rest.ResponseWriter, r *rest.Request) {
+	w.WriteJson(map[string]string{"hello": "world"})
 }

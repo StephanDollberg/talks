@@ -1,9 +1,29 @@
-Writing JSON REST APIs in GO
-Where we are in May 2015
-20 Oct 2015
+Writing JSON REST APIs in Go
+A Primer
+14 Oct 2015
 
 Stephan Dollberg
 stephan.dollberg@gmail.com
+
+* Why
+
+- Go and Go community are awesome
+- Easy deployment
+- Good tools
+- Performance
+
+* Why: Performance
+
+http://blog.parse.com/learn/how-we-moved-our-api-from-ruby-to-go-and-saved-our-sanity/
+
+- _"Our_reliability_improved_by_an_order_of_magnitude."_
+- _"We_could_downsize_our_provisioned_API_server_pool_by_about_90%."_
+- _"..._the_time_to_do_a_full_API_server_deploy_with_rolling_restarts_dropped_from_30_minutes_to_3_minutes."_
+
+http://blog.repustate.com/migrating-entire-api-go-python/
+
+- _"We_reduced_the_number_of_EC2_instances_required_by_85%"_
+- _"..._reducing_the_mean_response_time_of_an_API_call_from_100ms_to_10ms"_
 
 * Go-Json-Rest
 
@@ -15,22 +35,85 @@ github.com/ant0ine/go-json-rest-examples
 
 * HTTP Recap
 
+    func MyHandler(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte("Hello World"))
+    }
+
+    func main() {
+
+        http.HandleFunc("/", MyHandler)
+
+        http.ListenAndServe("localhost:8080", nil)
+
+    }
+
 * Handlers with Go-Json-Rest
 
-* Setting Up Go-Json-Rest
+    func MyRestHandler(w rest.ResponseWriter, r *rest.Request) { // HL
+        w.WriteJson(map[string]string{"hello": "world"})
+    }
+
+    func main() {
+        api := rest.NewApi()
+
+        router, _ := rest.MakeRouter(
+            &rest.Route{"GET", "/", MyRestHandler},
+        )
+
+        api.SetApp(router)
+        http.Handle("/", api.MakeHandler())
+        http.ListenAndServe("localhost:8080", nil)
+    }
 
 * Space Gallery
 
+(Demo)
+
+* Setting Up Go-Json-Rest
+
+    api := rest.NewApi()
+    api.Use(rest.DefaultDevStack...)
+
+    router, err := rest.MakeRouter(
+        &rest.Route{"GET", "/pics/:id", singlePic},
+        &rest.Route{"POST", "/pics/:id/like", likePic},
+        &rest.Route{"GET", "/pics", allPics},
+        &rest.Route{"GET", "/comments/:id", singleComment},
+        &rest.Route{"POST", "/comments", createComment},
+    )
+
+    // rest as before
+
 * CRUD
 
-* JSON Excourse
+    func singleComment(w rest.ResponseWriter, r *rest.Request) {
+        parsedId, err := strconv.ParseUint(r.PathParam("id"), 10, 32)
+        if err != nil {
+            rest.NotFound(w, r)
+            return
+        }
+
+        if pic, ok := commentStore[uint32(parsedId)]; ok {
+            w.WriteJson(pic)
+        } else {
+            rest.NotFound(w, r)
+        }
+    }
+
+* JSON in Go
+
+.image go_related_tags.png _ 600
+
+* JSON in Go: Maps
+* JSON in Go: Structs
+* JSON in Go: Anonymous structs
 
 * Middlewares
 
 * JWT Authentication
 
+* Bcrypt
+
 * There are more!
 
 * Gin!
-
-* Thanks
