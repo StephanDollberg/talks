@@ -20,10 +20,20 @@ http://blog.parse.com/learn/how-we-moved-our-api-from-ruby-to-go-and-saved-our-s
 - _"We_could_downsize_our_provisioned_API_server_pool_by_about_90%."_
 - _"..._the_time_to_do_a_full_API_server_deploy_with_rolling_restarts_dropped_from_30_minutes_to_3_minutes."_
 
-http://blog.repustate.com/migrating-entire-api-go-python/
+https://blog.repustate.com/migrating-entire-api-go-python/
 
 - _"We_reduced_the_number_of_EC2_instances_required_by_85%"_
 - _"..._reducing_the_mean_response_time_of_an_API_call_from_100ms_to_10ms"_
+
+* JSON in Go
+
+.image go_related_tags.png _ 600
+
+* JSON in Go: Maps
+
+
+* JSON in Go: Structs
+* JSON in Go: Anonymous structs
 
 * Go-Json-Rest
 
@@ -100,20 +110,88 @@ github.com/ant0ine/go-json-rest-examples
         }
     }
 
-* JSON in Go
-
-.image go_related_tags.png _ 600
-
-* JSON in Go: Maps
-* JSON in Go: Structs
-* JSON in Go: Anonymous structs
 
 * Middlewares
 
+    // logging, json indenting, stacktrace on panic
+    api.Use(rest.DefaultDevStack...)
+
+    // add cors to app
+    api.Use(&rest.CorsMiddleware{
+        RejectNonCorsRequests: false,
+        OriginValidator: func(origin string, request *rest.Request) bool {
+            return origin == "https://spacebook.com"
+        },
+        AllowedMethods: []string{"GET", "POST", "PUT"},
+        AllowedHeaders: []string{
+            "Accept", "Content-Type", "X-Custom-Header", "Origin"},
+        AccessControlAllowCredentials: true,
+        AccessControlMaxAge:           3600,
+    })
+
 * JWT Authentication
+
+Authentication is handle automatically:
+
+    jwtMiddleware := &jwt.JWTMiddleware{
+        Key:           []byte("super secret key"),
+        Realm:         "Spacebook",
+        Timeout:       time.Hour,
+        MaxRefresh:    time.Hour * 24,
+        Authenticator: authUser,
+    }
+
+Selectively activate middleware:
+
+    api.Use(&rest.IfMiddleware{
+        Condition: func(request *rest.Request) bool {
+            return request.URL.Path != "/login" && request.Method == "POST"
+        },
+        IfTrue: jwtMiddleware,
+    })
+
+* JWT Authentication
+
+    func createComment(w rest.ResponseWriter, r *rest.Request) {
+        c := &Comment{}
+        err := r.DecodeJsonPayload(c)
+        if err != nil {
+            rest.Error(w, "invalid comment", http.StatusBadRequest)
+            return
+        }
+
+        if pic, ok := picStore[c.PicId]; ok {
+            c.UserId = r.Env["REMOTE_USER"].(string)
+            c.Id = rand.Uint32()
+            commentStore[c.Id] = c
+            pic.Comments = append(pic.Comments, c.Id)
+            w.WriteJson(c)
+        }
+    }
 
 * Bcrypt
 
+    func authUser(userId string, passwordClaim string) bool {
+        if user, ok := userStore[userId]; ok {
+            return bcrypt.CompareHashAndPassword(user.Password, []byte(passwordClaim)) == nil
+        }
+        return false
+    }
+
 * There are more!
 
+- Gzip
+- TokenAuth
+- BasicAuth
+- Stats
+- ...
+
 * Gin!
+
+Automatic code reload
+
+    [gin] ERROR! Build failed.
+    # /path/to/code/demo
+    ./main.go:125: syntax error: unexpected name, expecting semicolon or newline or }
+
+    [gin] Build Successful

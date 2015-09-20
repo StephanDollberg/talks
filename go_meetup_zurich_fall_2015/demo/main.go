@@ -186,13 +186,5 @@ func main() {
 
 	http.Handle("/", http.FileServer(http.Dir("client/app/")))
 	http.Handle("/api/", http.StripPrefix("/api", api.MakeHandler()))
-	http.ListenAndServe("localhost:3001", nil)
-}
-
-func MyHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello World"))
-}
-
-func MyRestHandler(w rest.ResponseWriter, r *rest.Request) {
-	w.WriteJson(map[string]string{"hello": "world"})
+	http.ListenAndServe("127.0.0.1:3001", nil)
 }
