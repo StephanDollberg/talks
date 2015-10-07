@@ -5,6 +5,10 @@ A Primer
 Stephan Dollberg
 stephan.dollberg@gmail.com
 
+* Golang Usecases
+
+.image microservices.png _ 600
+
 * Why
 
 - Go and Go community are awesome
@@ -185,6 +189,8 @@ Selectively activate middleware:
 - BasicAuth
 - Stats
 - ...
+
+* x/net/context
 
 * Gin!
 
