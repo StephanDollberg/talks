@@ -35,9 +35,64 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 * JSON in Go: Maps
 
+.code demo/json.go /^func StringStringMap/,/^}
+
+* JSON in Go: Maps
+
+.code demo/json.go /^func StringInterfaceMap/,/^}
+
 
 * JSON in Go: Structs
+
+.code demo/json.go /^type Msg1/,/^}/
+.code demo/json.go /^func UnexportedStruct/,/^}/
+
+
+* JSON in Go: Structs
+
+.code demo/json.go /^type Msg1/,/^}/
+.code demo/json.go /^func UnexportedStruct/,/^}/
+
+    Output: 0
+
+
+* JSON in Go: Structs
+
+.code demo/json.go /^type Msg2/,/^}/
+.code demo/json.go /^func ExportedStruct/,/^}/
+
+
+* JSON in Go: Structs
+
+.code demo/json.go /^type Msg3/,/^}/
+.code demo/json.go /^func WithTags/,/^}/
+
+
+
 * JSON in Go: Anonymous structs
+
+.code demo/json.go /^func AnonymousStruct/,/^}/
+
+
+* JSON in Go: Other Tricks
+
+.code demo/json.go /^type OmitEmptyStruct/,/^}/
+.code demo/json.go /^func OmitEmpty/,/^}/
+
+
+* JSON in Go: Other Tricks
+
+.code demo/json.go /^type RawMessageStruct/,/^}/
+.code demo/json.go /^func RawMessage/,/^}/
+
+
+* JSON in Go: Caveats
+
+- Reference Types
+- Write to nil map
+- Reading is fine
+
+* JSON API using net/http
 
 * Go-Json-Rest
 
