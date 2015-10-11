@@ -23,6 +23,7 @@ type Msg3 struct {
 
 type OmitEmptyStruct struct {
 	Msg string `json:"msg,omitempty"` // HL
+	Ptr *int64 `json:"ptr,omitempty"` // HL
 	Id  int64  `json:"id"`
 }
 
@@ -92,6 +93,8 @@ func WithTags() {
 	}
 
 	fmt.Println(decoded.Msg, decoded.Id)
+	encoded, _ := json.Marshal(&decoded) // HL
+	fmt.Println(string(encoded))
 }
 
 func AnonymousStruct() {

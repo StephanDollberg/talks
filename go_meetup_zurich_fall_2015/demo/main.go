@@ -68,7 +68,7 @@ func initState() {
 }
 
 func singleComment(w rest.ResponseWriter, r *rest.Request) {
-	parsedId, err := strconv.ParseUint(r.PathParam("id"), 10, 32)
+	parsedId, err := strconv.ParseUint(r.PathParam("id"), 10, 32) // HL
 	if err != nil {
 		rest.NotFound(w, r)
 		return

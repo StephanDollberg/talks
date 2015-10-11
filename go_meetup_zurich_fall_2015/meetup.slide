@@ -37,10 +37,22 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 .code demo/json.go /^func StringStringMap/,/^}
 
+
+* JSON in Go: Maps
+
+.code demo/json.go /^func StringStringMap/,/^}
+
+    Output: Hello Go!
+
 * JSON in Go: Maps
 
 .code demo/json.go /^func StringInterfaceMap/,/^}
 
+* JSON in Go: Maps
+
+.code demo/json.go /^func StringInterfaceMap/,/^}
+
+    Output: Hello Go! 12345
 
 * JSON in Go: Structs
 
@@ -61,6 +73,14 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 .code demo/json.go /^type Msg2/,/^}/
 .code demo/json.go /^func ExportedStruct/,/^}/
 
+* JSON in Go: Structs
+
+.code demo/json.go /^type Msg2/,/^}/
+.code demo/json.go /^func ExportedStruct/,/^}/
+
+    Output: Hello Go! 12345
+            {"Msg":"Hello Go!","Id":12345}
+
 
 * JSON in Go: Structs
 
@@ -68,22 +88,48 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 .code demo/json.go /^func WithTags/,/^}/
 
 
+* JSON in Go: Structs
+
+.code demo/json.go /^type Msg3/,/^}/
+.code demo/json.go /^func WithTags/,/^}/
+
+    Output: Hello Go! 12345
+            {"msg":"Hello Go!","id":12345}
 
 * JSON in Go: Anonymous structs
 
 .code demo/json.go /^func AnonymousStruct/,/^}/
 
+* JSON in Go: Anonymous structs
+
+.code demo/json.go /^func AnonymousStruct/,/^}/
+
+    Output: Hello Go! 12345
 
 * JSON in Go: Other Tricks
 
 .code demo/json.go /^type OmitEmptyStruct/,/^}/
 .code demo/json.go /^func OmitEmpty/,/^}/
 
+* JSON in Go: Other Tricks
+
+.code demo/json.go /^type OmitEmptyStruct/,/^}/
+.code demo/json.go /^func OmitEmpty/,/^}/
+
+    Output: {"id":123}
+
 
 * JSON in Go: Other Tricks
 
 .code demo/json.go /^type RawMessageStruct/,/^}/
 .code demo/json.go /^func RawMessage/,/^}/
+
+* JSON in Go: Other Tricks
+
+.code demo/json.go /^type RawMessageStruct/,/^}/
+.code demo/json.go /^func RawMessage/,/^}/
+
+    Output: map[foo:1 bar:2]
 
 
 * JSON in Go: Caveats
@@ -155,19 +201,7 @@ github.com/ant0ine/go-json-rest-examples
 
 * CRUD
 
-    func singleComment(w rest.ResponseWriter, r *rest.Request) {
-        parsedId, err := strconv.ParseUint(r.PathParam("id"), 10, 32)
-        if err != nil {
-            rest.NotFound(w, r)
-            return
-        }
-
-        if pic, ok := commentStore[uint32(parsedId)]; ok {
-            w.WriteJson(pic)
-        } else {
-            rest.NotFound(w, r)
-        }
-    }
+.code demo/main.go /^func singleComment/,/^}/
 
 
 * Middlewares
@@ -246,6 +280,21 @@ Selectively activate middleware:
 - ...
 
 * x/net/context
+
+_A_Context_carries_a_deadline,_a_cancelation_signal,_and_other_values_across_API_boundaries._
+
+    type Context interface {
+        Deadline() (deadline time.Time, ok bool)
+        Done() <-chan struct{}
+        Err() error
+        Value(key interface{}) interface{}
+    }
+
+    func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
+    func WithDeadline(parent Context, deadline time.Time) (Context, CancelFunc)
+    func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
+    func WithValue(parent Context, key interface{}, val interface{}) Context
+
 
 * Gin!
 
