@@ -35,48 +35,48 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 * JSON in Go: Maps
 
-.code demo/json.go /^func StringStringMap/,/^}
+.code demo/jsondemo/json.go /^func StringStringMap/,/^}
 
 
 * JSON in Go: Maps
 
-.code demo/json.go /^func StringStringMap/,/^}
+.code demo/jsondemo/json.go /^func StringStringMap/,/^}
 
     Output: Hello Go!
 
 * JSON in Go: Maps
 
-.code demo/json.go /^func StringInterfaceMap/,/^}
+.code demo/jsondemo/json.go /^func StringInterfaceMap/,/^}
 
 * JSON in Go: Maps
 
-.code demo/json.go /^func StringInterfaceMap/,/^}
+.code demo/jsondemo/json.go /^func StringInterfaceMap/,/^}
 
     Output: Hello Go! 12345
 
 * JSON in Go: Structs
 
-.code demo/json.go /^type Msg1/,/^}/
-.code demo/json.go /^func UnexportedStruct/,/^}/
+.code demo/jsondemo/json.go /^type Msg1/,/^}/
+.code demo/jsondemo/json.go /^func UnexportedStruct/,/^}/
 
 
 * JSON in Go: Structs
 
-.code demo/json.go /^type Msg1/,/^}/
-.code demo/json.go /^func UnexportedStruct/,/^}/
+.code demo/jsondemo/json.go /^type Msg1/,/^}/
+.code demo/jsondemo/json.go /^func UnexportedStruct/,/^}/
 
     Output: 0
 
 
 * JSON in Go: Structs
 
-.code demo/json.go /^type Msg2/,/^}/
-.code demo/json.go /^func ExportedStruct/,/^}/
+.code demo/jsondemo/json.go /^type Msg2/,/^}/
+.code demo/jsondemo/json.go /^func ExportedStruct/,/^}/
 
 * JSON in Go: Structs
 
-.code demo/json.go /^type Msg2/,/^}/
-.code demo/json.go /^func ExportedStruct/,/^}/
+.code demo/jsondemo/json.go /^type Msg2/,/^}/
+.code demo/jsondemo/json.go /^func ExportedStruct/,/^}/
 
     Output: Hello Go! 12345
             {"Msg":"Hello Go!","Id":12345}
@@ -84,50 +84,50 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 * JSON in Go: Structs
 
-.code demo/json.go /^type Msg3/,/^}/
-.code demo/json.go /^func WithTags/,/^}/
+.code demo/jsondemo/json.go /^type Msg3/,/^}/
+.code demo/jsondemo/json.go /^func WithTags/,/^}/
 
 
 * JSON in Go: Structs
 
-.code demo/json.go /^type Msg3/,/^}/
-.code demo/json.go /^func WithTags/,/^}/
+.code demo/jsondemo/json.go /^type Msg3/,/^}/
+.code demo/jsondemo/json.go /^func WithTags/,/^}/
 
     Output: Hello Go! 12345
             {"msg":"Hello Go!","id":12345}
 
 * JSON in Go: Anonymous structs
 
-.code demo/json.go /^func AnonymousStruct/,/^}/
+.code demo/jsondemo/json.go /^func AnonymousStruct/,/^}/
 
 * JSON in Go: Anonymous structs
 
-.code demo/json.go /^func AnonymousStruct/,/^}/
+.code demo/jsondemo/json.go /^func AnonymousStruct/,/^}/
 
     Output: Hello Go! 12345
 
 * JSON in Go: Other Tricks
 
-.code demo/json.go /^type OmitEmptyStruct/,/^}/
-.code demo/json.go /^func OmitEmpty/,/^}/
+.code demo/jsondemo/json.go /^type OmitEmptyStruct/,/^}/
+.code demo/jsondemo/json.go /^func OmitEmpty/,/^}/
 
 * JSON in Go: Other Tricks
 
-.code demo/json.go /^type OmitEmptyStruct/,/^}/
-.code demo/json.go /^func OmitEmpty/,/^}/
+.code demo/jsondemo/json.go /^type OmitEmptyStruct/,/^}/
+.code demo/jsondemo/json.go /^func OmitEmpty/,/^}/
 
     Output: {"id":123}
 
 
 * JSON in Go: Other Tricks
 
-.code demo/json.go /^type RawMessageStruct/,/^}/
-.code demo/json.go /^func RawMessage/,/^}/
+.code demo/jsondemo/json.go /^type RawMessageStruct/,/^}/
+.code demo/jsondemo/json.go /^func RawMessage/,/^}/
 
 * JSON in Go: Other Tricks
 
-.code demo/json.go /^type RawMessageStruct/,/^}/
-.code demo/json.go /^func RawMessage/,/^}/
+.code demo/jsondemo/json.go /^type RawMessageStruct/,/^}/
+.code demo/jsondemo/json.go /^func RawMessage/,/^}/
 
     Output: map[foo:1 bar:2]
 
@@ -147,20 +147,6 @@ Go-Json-Rest by Antoine Imbert
 github.com/ant0ine/go-json-rest
 
 github.com/ant0ine/go-json-rest-examples
-
-* HTTP Recap
-
-    func MyHandler(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte("Hello World"))
-    }
-
-    func main() {
-
-        http.HandleFunc("/", MyHandler)
-
-        http.ListenAndServe("localhost:8080", nil)
-
-    }
 
 * Handlers with Go-Json-Rest
 
@@ -295,13 +281,22 @@ _A_Context_carries_a_deadline,_a_cancelation_signal,_and_other_values_across_API
     func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
     func WithValue(parent Context, key interface{}, val interface{}) Context
 
+* x/net/context main package
 
-* Gin!
+.code demo/contextdemo/context.go /^func handler/,/^}/
 
-Automatic code reload
+* x/net/context city package
 
-    [gin] ERROR! Build failed.
-    # /path/to/code/demo
-    ./main.go:125: syntax error: unexpected name, expecting semicolon or newline or }
+.code demo/cityapi/city.go /START OMIT/,/END OMIT/
 
-    [gin] Build Successful
+* x/net/context weather package
+
+.code demo/weatherapi/weather.go /^func Query/,/^}/
+
+* x/net/context weather package
+
+.code demo/weatherapi/weather.go /^func getImpl/,/^}/
+
+* x/net/context weather package
+
+.code demo/weatherapi/weather.go /^func httpDo/,/^}/
