@@ -1,6 +1,6 @@
 Writing JSON REST APIs in Go
 A Primer
-14 Oct 2015
+30 Oct 2015
 
 Stephan Dollberg
 stephan.dollberg@gmail.com
@@ -33,16 +33,16 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 .image go_related_tags.png _ 600
 
-* JSON in Go: Maps
+#* JSON in Go: Maps
 
-.code demo/jsondemo/json.go /^func StringStringMap/,/^}
+#.code demo/jsondemo/json.go /^func StringStringMap/,/^}
 
 
-* JSON in Go: Maps
+#* JSON in Go: Maps
 
-.code demo/jsondemo/json.go /^func StringStringMap/,/^}
+#.code demo/jsondemo/json.go /^func StringStringMap/,/^}
 
-    Output: Hello Go!
+#    Output: Hello Go!
 
 * JSON in Go: Maps
 
@@ -96,15 +96,15 @@ https://blog.repustate.com/migrating-entire-api-go-python/
     Output: Hello Go! 12345
             {"msg":"Hello Go!","id":12345}
 
-* JSON in Go: Anonymous structs
+#* JSON in Go: Anonymous structs
 
-.code demo/jsondemo/json.go /^func AnonymousStruct/,/^}/
+#.code demo/jsondemo/json.go /^func AnonymousStruct/,/^}/
 
-* JSON in Go: Anonymous structs
+#* JSON in Go: Anonymous structs
 
-.code demo/jsondemo/json.go /^func AnonymousStruct/,/^}/
+#.code demo/jsondemo/json.go /^func AnonymousStruct/,/^}/
 
-    Output: Hello Go! 12345
+#    Output: Hello Go! 12345
 
 * JSON in Go: Other Tricks
 
@@ -134,11 +134,11 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 * JSON in Go: Caveats
 
-- Reference Types
-- Write to nil map
-- Reading is fine
+- Be aware of tags
+- Pass a reference to Unmarshal
+- Be aware of nil reference types 
 
-* JSON API using net/http
+# * JSON API using net/http
 
 * Go-Json-Rest
 
@@ -148,73 +148,34 @@ github.com/ant0ine/go-json-rest
 
 github.com/ant0ine/go-json-rest-examples
 
-* Handlers with Go-Json-Rest
-
-    func MyRestHandler(w rest.ResponseWriter, r *rest.Request) { // HL
-        w.WriteJson(map[string]string{"hello": "world"})
-    }
-
-    func main() {
-        api := rest.NewApi()
-
-        router, _ := rest.MakeRouter(
-            &rest.Route{"GET", "/", MyRestHandler},
-        )
-
-        api.SetApp(router)
-        http.Handle("/", api.MakeHandler())
-        http.ListenAndServe("localhost:8080", nil)
-    }
-
-* Space Gallery
-
-(Demo)
 
 * Setting Up Go-Json-Rest
 
-    api := rest.NewApi()
-    api.Use(rest.DefaultDevStack...)
-
-    router, err := rest.MakeRouter(
-        &rest.Route{"GET", "/pics/:id", singlePic},
-        &rest.Route{"POST", "/pics/:id/like", likePic},
-        &rest.Route{"GET", "/pics", allPics},
-        &rest.Route{"GET", "/comments/:id", singleComment},
-        &rest.Route{"POST", "/comments", createComment},
-    )
-
-    // rest as before
+.code demo/pastebin.go /^func MakeApiSimple/,/^}/
 
 * CRUD
 
-.code demo/main.go /^func singleComment/,/^}/
+.code demo/pastebin.go /^func GetPaste/,/^}/
 
+* CRUD
+
+.code demo/pastebin.go /^func PostPaste/,/^}/
 
 * Middlewares
 
     // logging, json indenting, stacktrace on panic
     api.Use(rest.DefaultDevStack...)
 
-    // add cors to app
-    api.Use(&rest.CorsMiddleware{
-        RejectNonCorsRequests: false,
-        OriginValidator: func(origin string, request *rest.Request) bool {
-            return origin == "https://spacebook.com"
-        },
-        AllowedMethods: []string{"GET", "POST", "PUT"},
-        AllowedHeaders: []string{
-            "Accept", "Content-Type", "X-Custom-Header", "Origin"},
-        AccessControlAllowCredentials: true,
-        AccessControlMaxAge:           3600,
-    })
+    // add middleware to app
+    api.Use(&package.MyMiddleware{/* Options here */})
 
 * JWT Authentication
 
-Authentication is handle automatically:
+Authentication is handled automatically:
 
     jwtMiddleware := &jwt.JWTMiddleware{
         Key:           []byte("super secret key"),
-        Realm:         "Spacebook",
+        Realm:         "Pastebin",
         Timeout:       time.Hour,
         MaxRefresh:    time.Hour * 24,
         Authenticator: authUser,
@@ -229,33 +190,13 @@ Selectively activate middleware:
         IfTrue: jwtMiddleware,
     })
 
-* JWT Authentication
+* State and Middlewares
 
-    func createComment(w rest.ResponseWriter, r *rest.Request) {
-        c := &Comment{}
-        err := r.DecodeJsonPayload(c)
-        if err != nil {
-            rest.Error(w, "invalid comment", http.StatusBadRequest)
-            return
-        }
+.code demo/pastebin.go /^func PostPasteWithUser/,/^}/
 
-        if pic, ok := picStore[c.PicId]; ok {
-            c.UserId = r.Env["REMOTE_USER"].(string)
-            c.Id = rand.Uint32()
-            commentStore[c.Id] = c
-            pic.Comments = append(pic.Comments, c.Id)
-            w.WriteJson(c)
-        }
-    }
+#* Bcrypt
 
-* Bcrypt
-
-    func authUser(userId string, passwordClaim string) bool {
-        if user, ok := userStore[userId]; ok {
-            return bcrypt.CompareHashAndPassword(user.Password, []byte(passwordClaim)) == nil
-        }
-        return false
-    }
+#.code demo/pastebin.go /^func authUser/,/^}/
 
 * There are more!
 
@@ -263,6 +204,7 @@ Selectively activate middleware:
 - TokenAuth
 - BasicAuth
 - Stats
+- CORS
 - ...
 
 * x/net/context

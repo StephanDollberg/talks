@@ -135,7 +135,7 @@ func createComment(w rest.ResponseWriter, r *rest.Request) {
 
 	if pic, ok := picStore[c.PicId]; ok {
 		c.UserId = r.Env["REMOTE_USER"].(string)
-		c.Id = rand.Uint32()
+		c.Id = rand.uint32()
 		commentStore[c.Id] = c
 		pic.Comments = append(pic.Comments, c.Id)
 		w.WriteJson(c)
