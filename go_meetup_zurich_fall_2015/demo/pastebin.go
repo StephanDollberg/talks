@@ -61,15 +61,15 @@ type PasteWithUser struct {
 	User  string `json:"user"`
 }
 
-func GetPaste(w rest.ResponseWriter, r *rest.Request) {
-	parsedId, err := strconv.ParseUint(r.PathParam("id"), 10, 32)
+func GetPaste(w rest.ResponseWriter, r *rest.Request) { // HL
+	parsedId, err := strconv.ParseUint(r.PathParam("id"), 10, 32) // HL
 	if err != nil {
 		rest.NotFound(w, r)
 		return
 	}
 
 	if paste, ok := StoreGet(uint32(parsedId)); ok {
-		w.WriteJson(paste)
+		w.WriteJson(paste) // HL
 		return
 	}
 
@@ -78,7 +78,7 @@ func GetPaste(w rest.ResponseWriter, r *rest.Request) {
 
 func PostPaste(w rest.ResponseWriter, r *rest.Request) {
 	paste := &Paste{}
-	err := r.DecodeJsonPayload(&paste)
+	err := r.DecodeJsonPayload(&paste) // HL
 	if err != nil {
 		rest.Error(w, "Invalid Paste", http.StatusBadRequest)
 		return
@@ -117,10 +117,10 @@ func authUser(userId string, passwordClaim string) bool {
 }
 
 func MakeApiSimple() *rest.Api {
-	api := rest.NewApi()
-	api.Use(rest.DefaultDevStack...)
+	api := rest.NewApi()             // HL
+	api.Use(rest.DefaultDevStack...) // HL
 
-	router, err := rest.MakeRouter(
+	router, err := rest.MakeRouter( // HL
 		&rest.Route{"GET", "/pastes/:id", GetPaste},
 		&rest.Route{"POST", "/pastes", PostPaste},
 		&rest.Route{"GET", "/pastes", GetAll},
@@ -130,7 +130,7 @@ func MakeApiSimple() *rest.Api {
 		log.Fatal(err)
 	}
 
-	api.SetApp(router)
+	api.SetApp(router) // HL
 	return api
 }
 

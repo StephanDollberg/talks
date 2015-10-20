@@ -13,17 +13,16 @@ import (
 const serviceBaseUrl = "http://localhost:20000/"
 
 func httpDo(ctx context.Context, req *http.Request, f func(*http.Response, error) error) error {
-	// Run the HTTP request in a goroutine and pass the response to f.
 	tr := &http.Transport{}
 	client := &http.Client{Transport: tr}
 	c := make(chan error, 1)
-	go func() { c <- f(client.Do(req)) }()
+	go func() { c <- f(client.Do(req)) }() // HL
 	select {
-	case <-ctx.Done():
+	case <-ctx.Done(): // HL
 		tr.CancelRequest(req)
 		<-c // Wait for f to return.
 		return ctx.Err()
-	case err := <-c:
+	case err := <-c: // HL
 		return err
 	}
 }
@@ -33,7 +32,7 @@ type resultWrapper struct {
 	Err   error
 }
 
-func handleResponse(resp *http.Response, err error, res *resultWrapper) error {
+func handleResponse(resp *http.Response, err error, res *int) error {
 	if err != nil {
 		return err
 	}
@@ -45,11 +44,11 @@ func handleResponse(resp *http.Response, err error, res *resultWrapper) error {
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return err
 	}
-	res.Value = data.Temp
+	*res = data.Temp
 	return nil
 }
 
-func getImpl(ctx context.Context, reqType string, city string, out chan resultWrapper) {
+func createRequest(reqType string, city string) *http.Request {
 	req, err := http.NewRequest("GET", serviceBaseUrl+reqType, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -58,21 +57,28 @@ func getImpl(ctx context.Context, reqType string, city string, out chan resultWr
 	q := req.URL.Query()
 	q.Set("q", city)
 	req.URL.RawQuery = q.Encode()
-	res := resultWrapper{}
 
-	res.Err = httpDo(ctx, req, func(resp *http.Response, err error) error {
+	return req
+}
+
+func getImpl(ctx context.Context, reqType string, out chan resultWrapper) {
+	ci, _ := city.FromContext(ctx) // HL
+	request := createRequest(reqType, ci)
+	res := 0
+
+	err := httpDo(ctx, request, func(resp *http.Response, err error) error { // HL
 		return handleResponse(resp, err, &res)
 	})
 
-	out <- res
+	out <- resultWrapper{res, err} // HL
 }
 
-func getForecast(ctx context.Context, city string, out chan resultWrapper) {
-	getImpl(ctx, "forecast", city, out)
+func getForecast(ctx context.Context, out chan resultWrapper) {
+	getImpl(ctx, "forecast", out)
 }
 
-func getTemp(ctx context.Context, city string, out chan resultWrapper) {
-	getImpl(ctx, "temp", city, out)
+func getTemp(ctx context.Context, out chan resultWrapper) {
+	getImpl(ctx, "temp", out)
 }
 
 type QueryResult struct {
@@ -81,16 +87,15 @@ type QueryResult struct {
 }
 
 func Query(ctx context.Context) (*QueryResult, error) {
-	city, _ := city.FromContext(ctx) // HL
 	tempChan, forecastChan := make(chan resultWrapper, 1), make(chan resultWrapper, 1)
-	go getTemp(ctx, city, tempChan)
-	go getForecast(ctx, city, forecastChan)
+	go getTemp(ctx, tempChan)         // HL
+	go getForecast(ctx, forecastChan) // HL
 	temperature, forecast := resultWrapper{}, resultWrapper{}
 
 	for i := 0; i < 2; i++ {
 		select {
-		case temperature = <-temperatureChan: // HL
-			if temperature.Err != nil { // HL
+		case temperature = <-tempChan:
+			if temperature.Err != nil {
 				return nil, temperature.Err
 			}
 		case forecast = <-forecastChan:

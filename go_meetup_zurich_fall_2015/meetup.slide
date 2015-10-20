@@ -33,6 +33,11 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 .image go_related_tags.png _ 600
 
+* JSON in Go
+
+    func Marshal(v interface{}) ([]byte, error)
+    func Unmarshal(data []byte, v interface{}) error
+
 #* JSON in Go: Maps
 
 #.code demo/jsondemo/json.go /^func StringStringMap/,/^}
@@ -106,37 +111,37 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 #    Output: Hello Go! 12345
 
-* JSON in Go: Other Tricks
+#* JSON in Go: Other Tricks
 
-.code demo/jsondemo/json.go /^type OmitEmptyStruct/,/^}/
-.code demo/jsondemo/json.go /^func OmitEmpty/,/^}/
+#.code demo/jsondemo/json.go /^type OmitEmptyStruct/,/^}/
+#.code demo/jsondemo/json.go /^func OmitEmpty/,/^}/
 
-* JSON in Go: Other Tricks
+#* JSON in Go: Other Tricks
 
-.code demo/jsondemo/json.go /^type OmitEmptyStruct/,/^}/
-.code demo/jsondemo/json.go /^func OmitEmpty/,/^}/
+#.code demo/jsondemo/json.go /^type OmitEmptyStruct/,/^}/
+#.code demo/jsondemo/json.go /^func OmitEmpty/,/^}/
 
-    Output: {"id":123}
+#    Output: {"id":123}
 
 
-* JSON in Go: Other Tricks
+#* JSON in Go: Other Tricks
 
-.code demo/jsondemo/json.go /^type RawMessageStruct/,/^}/
-.code demo/jsondemo/json.go /^func RawMessage/,/^}/
+#.code demo/jsondemo/json.go /^type RawMessageStruct/,/^}/
+#.code demo/jsondemo/json.go /^func RawMessage/,/^}/
 
-* JSON in Go: Other Tricks
+#* JSON in Go: Other Tricks
 
-.code demo/jsondemo/json.go /^type RawMessageStruct/,/^}/
-.code demo/jsondemo/json.go /^func RawMessage/,/^}/
+#.code demo/jsondemo/json.go /^type RawMessageStruct/,/^}/
+#.code demo/jsondemo/json.go /^func RawMessage/,/^}/
 
-    Output: map[foo:1 bar:2]
+#    Output: map[foo:1 bar:2]
 
 
 * JSON in Go: Caveats
 
 - Be aware of tags
 - Pass a reference to Unmarshal
-- Be aware of nil reference types 
+- Be aware of nil reference types
 
 # * JSON API using net/http
 
@@ -207,6 +212,12 @@ Selectively activate middleware:
 - CORS
 - ...
 
+* Microservice/REST APIs
+
+- Query several backend services
+- Wait for all/any replies
+- Cancel outstanding requests to backends on error or timeout
+
 * x/net/context
 
 _A_Context_carries_a_deadline,_a_cancelation_signal,_and_other_values_across_API_boundaries._
@@ -225,7 +236,7 @@ _A_Context_carries_a_deadline,_a_cancelation_signal,_and_other_values_across_API
 
 * x/net/context main package
 
-.code demo/contextdemo/context.go /^func handler/,/^}/
+.code -numbers demo/contextdemo/context.go /^func handler/,/^}/
 
 * x/net/context city package
 
@@ -242,3 +253,8 @@ _A_Context_carries_a_deadline,_a_cancelation_signal,_and_other_values_across_API
 * x/net/context weather package
 
 .code demo/weatherapi/weather.go /^func httpDo/,/^}/
+
+* Go in the Web
+
+- Language features enable concurrency
+- (Standard) library gives framework for cancelation and state
