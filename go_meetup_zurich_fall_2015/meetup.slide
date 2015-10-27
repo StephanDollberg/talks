@@ -258,5 +258,7 @@ _A_Context_carries_a_deadline,_a_cancelation_signal,_and_other_values_across_API
 
 * Go in the Web
 
+- Go is boring, but gets its job done
+- Simple frameworks with a specific task
 - Language features enable concurrency
 - (Standard) library gives framework for cancelation and state
