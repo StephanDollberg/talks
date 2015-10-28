@@ -153,20 +153,26 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 Go-Json-Rest by Antoine Imbert
 
+Features:
+
+- Improved router and handler interface for REST functionality
+- Middleware support
+
 github.com/ant0ine/go-json-rest
 
 github.com/ant0ine/go-json-rest-examples
+
 
 
 * Setting Up Go-Json-Rest
 
 .code demo/pastebin.go /^func MakeApiSimple/,/^}/
 
-* CRUD
+* CRUD - GetPaste
 
 .code demo/pastebin.go /^func GetPaste/,/^}/
 
-* CRUD
+* CRUD - PostPaste
 
 .code demo/pastebin.go /^func PostPaste/,/^}/
 
