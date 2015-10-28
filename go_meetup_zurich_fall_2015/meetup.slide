@@ -164,15 +164,15 @@ github.com/ant0ine/go-json-rest-examples
 
 
 
-* Setting Up Go-Json-Rest
+* Pastebin - Setting Up Go-Json-Rest
 
 .code demo/pastebin.go /^func MakeApiSimple/,/^}/
 
-* CRUD - GetPaste
+* Pastebin - GetPaste
 
 .code demo/pastebin.go /^func GetPaste/,/^}/
 
-* CRUD - PostPaste
+* Pastebin - PostPaste
 
 .code demo/pastebin.go /^func PostPaste/,/^}/
 
