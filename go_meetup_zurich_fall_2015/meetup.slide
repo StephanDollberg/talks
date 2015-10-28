@@ -31,6 +31,8 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 * JSON in Go
 
+* JSON in Go
+
 .image go_related_tags.png _ 600
 
 * JSON in Go
@@ -145,6 +147,8 @@ https://blog.repustate.com/migrating-entire-api-go-python/
 
 # * JSON API using net/http
 
+* Writing JSON REST APIs
+
 * Go-Json-Rest
 
 Go-Json-Rest by Antoine Imbert
@@ -211,6 +215,8 @@ Selectively activate middleware:
 - Stats
 - CORS
 - ...
+
+* Writing Microservices
 
 * Microservice/REST APIs
 
