@@ -256,6 +256,12 @@ _A_Context_carries_a_deadline,_a_cancelation_signal,_and_other_values_across_API
 
 .code demo/weatherapi/weather.go /^func httpDo/,/^}/
 
+* More info on x/net/context
+
+vimeo.com/115309491
+
+blog.golang.org/context
+
 * Go in the Web
 
 - Go is boring, but gets its job done
