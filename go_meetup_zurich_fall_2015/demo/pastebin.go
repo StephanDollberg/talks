@@ -116,7 +116,7 @@ func authUser(userId string, passwordClaim string) bool {
 	return false
 }
 
-func MakeApiSimple() *rest.Api {
+func MakeApiSimple() http.Handler {
 	api := rest.NewApi()             // HL
 	api.Use(rest.DefaultDevStack...) // HL
 
@@ -131,10 +131,10 @@ func MakeApiSimple() *rest.Api {
 	}
 
 	api.SetApp(router) // HL
-	return api
+	return api.MakeHandler()
 }
 
-func MakeApi() *rest.Api {
+func MakeApi() http.Handler {
 	api := rest.NewApi()
 	api.Use(rest.DefaultDevStack...)
 
@@ -166,14 +166,14 @@ func MakeApi() *rest.Api {
 	}
 
 	api.SetApp(router)
-	return api
+	return api.MakeHandler()
 }
 
 func main() {
 
-	api := MakeApi()
+	handler := MakeApi()
 	http.Handle("/", http.FileServer(http.Dir("client/app/")))
-	http.Handle("/api/", http.StripPrefix("/api", api.MakeHandler()))
+	http.Handle("/api/", http.StripPrefix("/api", handler))
 	http.ListenAndServe("127.0.0.1:20001", nil)
 }
 
