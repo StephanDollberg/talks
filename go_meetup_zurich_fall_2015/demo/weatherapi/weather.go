@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"go_meetup_zurich_fall_2015/demo/cityapi"
+	"github.com/stephandollberg/talks/go_meetup_zurich_fall_2015/demo/cityapi"
 
 	"golang.org/x/net/context"
 )

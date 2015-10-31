@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"go_meetup_zurich_fall_2015/demo/cityapi"
-	"go_meetup_zurich_fall_2015/demo/weatherapi"
+	"github.com/stephandollberg/talks/go_meetup_zurich_fall_2015/demo/cityapi"
+	"github.com/stephandollberg/talks/go_meetup_zurich_fall_2015/demo/weatherapi"
 
 	"golang.org/x/net/context"
 )

@@ -166,15 +166,15 @@ github.com/ant0ine/go-json-rest-examples
 
 * Pastebin - Setting Up Go-Json-Rest
 
-.code demo/pastebin.go /^func MakeApiSimple/,/^}/
+.code demo/pastebin/pastebin.go /^func MakeApiSimple/,/^}/
 
 * Pastebin - GetPaste
 
-.code demo/pastebin.go /^func GetPaste/,/^}/
+.code demo/pastebin/pastebin.go /^func GetPaste/,/^}/
 
 * Pastebin - PostPaste
 
-.code demo/pastebin.go /^func PostPaste/,/^}/
+.code demo/pastebin/pastebin.go /^func PostPaste/,/^}/
 
 * Middlewares
 
@@ -207,11 +207,11 @@ Selectively activate middleware:
 
 * State and Middlewares
 
-.code demo/pastebin.go /^func PostPasteWithUser/,/^}/
+.code demo/pastebin/pastebin.go /^func PostPasteWithUser/,/^}/
 
 #* Bcrypt
 
-#.code demo/pastebin.go /^func authUser/,/^}/
+#.code demo/pastebin/pastebin.go /^func authUser/,/^}/
 
 * There are more!
 
